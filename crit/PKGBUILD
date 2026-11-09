@@ -1,0 +1,53 @@
+# Maintainer: s. rannou <mxs@sbrk.org>
+#
+# crit (https://crit.md, https://github.com/tomasz-tomczyk/crit)
+
+pkgname=crit
+pkgver=0.23.2
+pkgrel=1
+pkgdesc="Review AI coding agents' plans, diffs and running apps in the browser"
+arch=('x86_64')
+url='https://crit.md'
+license=('MIT')
+depends=('git' 'glibc')
+
+optdepends=(
+  'xdg-utils: open the review UI in the browser'
+)
+
+provides=('crit')
+conflicts=('crit')
+options=('!strip' '!debug')
+
+tag=v$pkgver
+case "$CARCH" in
+  x86_64)
+    asset=crit-linux-amd64
+    asset_sha256=10aa756a3146362be3a349cc8223955e23a1cd6daa0abbb13dd500741f793a90
+    ;;
+  *)
+    echo "crit-bin: unsupported architecture $CARCH (upstream builds linux-amd64 only)" >&2
+    exit 1
+    ;;
+esac
+
+source=(
+  "$asset::https://github.com/tomasz-tomczyk/crit/releases/download/$tag/$asset"
+  "LICENSE::https://raw.githubusercontent.com/tomasz-tomczyk/crit/$tag/LICENSE"
+)
+
+sha256sums=(
+  "$asset_sha256"
+  '2cf35fdedf349b666381d909b857baf5641314024edf7064e16d553c59f67345'
+)
+
+check() {
+  local bin="$srcdir/$pkgname-$pkgver-check"
+  install -Dm755 "$asset" "$bin"
+  CRIT_NO_UPDATE_CHECK=1 "$bin" --version | grep -Fq "v$pkgver"
+}
+
+package() {
+  install -Dm755 "$asset" "$pkgdir/usr/bin/crit"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

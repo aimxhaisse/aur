@@ -1,0 +1,20 @@
+# Build tree used by `just build` (PKGDEST / SRCDEST / BUILDDIR live here).
+/.build/
+
+# Leftovers from running makepkg by hand inside a package directory; the
+# justfile always builds out of tree, so these are always accidental.
+src/
+pkg/
+*.pkg.tar*
+*.src.tar*
+*.part
+
+# Repository / signature leftovers
+*.db
+*.db.tar.gz
+*.sig
+
+# Editors
+*.swp
+*~
+.DS_Store
